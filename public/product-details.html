@@ -1,0 +1,95 @@
+ <!-- page1.html -->
+ <!DOCTYPE html>
+ <html>
+ <head>
+   <title>Page 3</title>
+   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+ </head>
+ <body>
+   <div>
+     <form id="getAllProductsForm" style="text-align: center; margin-top: 30px;">
+     <button id="viewButton" type="submit" style="background-color: #228B22; border: #228B22; padding: 15px; color: white;">View product details</button>
+ </form>
+ <div id="productInfo">
+     <!-- Product information will be displayed here -->
+   </div>
+   <script src="https://cdn.jsdelivr.net/npm/web3@1.5.2/dist/web3.min.js"></script>
+   <script>
+     document.getElementById('getAllProductsForm').addEventListener('submit', async function (event) {
+       event.preventDefault();
+       const viewButton = document.getElementById('viewButton');
+       viewButton.style.display = 'none';
+       // Fetch all product details from the blockchain
+       //const pid = 1;
+        
+       const urlParams = new URLSearchParams(window.location.search);
+const productId = urlParams.get('pid');
+console.log(productId);
+       try {
+       
+         const response = await fetch('/get-all-products', {
+           method: 'POST',
+           headers: {
+             'Content-Type': 'application/json'
+           },
+           body: JSON.stringify({ pid: productId })
+         });
+ 
+         if (!response.ok) {
+           throw new Error('Failed to fetch product details');
+         }
+ 
+         const allProducts = await response.json();
+         displayProductInfo(allProducts);
+       } catch (error) {
+         console.error('Error retrieving product information:', error.message);
+         // Display an error message if needed
+       }
+     });
+ 
+     function displayProductInfo(product) {
+       const productInfoDiv = document.getElementById('productInfo');
+       productInfoDiv.innerHTML = `
+       <div class="container">
+             <table class="table table-striped">
+           <thead>
+             <tr>
+               <th scope="col" class="p-2" style="background-color: #228B22; color:white;">ID</th>
+               <th scope="col" class="p-2" style="background-color: #228B22;color:white;">Product</th>
+               <th scope="col" class="p-2" style="background-color: #228B22;color:white;">Manufactury</th>
+               <th scope="col" class="p-2" style="background-color: #228B22;color:white;">Manufactured Location</th>
+               <th scope="col" class="p-2" style="background-color: #228B22;color:white;">Date of Manufacturing</th>
+               <th scope="col" class="p-2" style="background-color: #228B22;color:white;">Date of Expiry</th>
+               <th scope="col" class="p-2" style="background-color: #228B22;color:white;">Retailer</th>
+               <th scope="col" class="p-2" style="background-color: #228B22;color:white;">Retailer Location</th>
+               <th scope="col" class="p-2" style="background-color: #228B22;color:white;">Date of Purchase</th>
+          
+             </tr>
+           </thead>
+        <tbody>
+         
+       
+           <tr>
+               <td class="p-2">${product.id.toString()}</td>
+               <td class="p-2">${product.product_name}</td>
+               <td class="p-2">${product.mcompany_name}</td>
+               <td class="p-2">${product.mlocation}</td>
+               <td class="p-2">${product.dom}</td>
+               <td class="p-2">${product.doe}</td>
+               <td class="p-2">${product.rcompany_name}</td>
+               <td class="p-2">${product.rlocation}</td>
+               <td class="p-2">${product.dop}</td>
+             </tr>
+           
+         </tbody>
+         </table>
+     </div>
+      
+       `;
+     }
+   </script>
+ </div>
+ <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+ </body>
+ </html>
+ 
